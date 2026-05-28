@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baby Gender Results 👶</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --boy:        #4a9de0;
+  --boy-light:  #daeeff;
+  --boy-mid:    #9dcef5;
+  --boy-dark:   #1b4f80;
+  --girl:       #e96fa4;
+  --girl-light: #ffe0ef;
+  --girl-mid:   #f5a8cc;
+  --girl-dark:  #8b2252;
+  --cream:      #fdf7f2;
+  --soft:       #f0e6de;
+  --text:       #3b2b2b;
+  --muted:      #9a7f7f;
+  --white:      #ffffff;
+}
+
+html, body { min-height: 100%; font-family: 'Nunito', sans-serif; }
+
+body {
+  min-height: 100vh;
+  background: var(--cream);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Ambient glow background */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse at 15% 20%,  rgba(74,157,224,0.14)  0%, transparent 50%),
+    radial-gradient(ellipse at 85% 80%,  rgba(233,111,164,0.14) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 10%,  rgba(233,111,164,0.07) 0%, transparent 40%),
+    radial-gradient(ellipse at 15% 90%,  rgba(74,157,224,0.07)  0%, transparent 40%);
+}
+
+/* ── FLOATING BABY ELEMENTS ── */
+.bg-floats { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+.float-item {
+  position: absolute; opacity: 0.13; user-select: none;
+  animation: gentleFloat linear infinite;
+}
+@keyframes gentleFloat {
+  0%,100% { transform: translateY(0)     rotate(0deg);  }
+  25%     { transform: translateY(-16px) rotate(6deg);  }
+  50%     { transform: translateY(-7px)  rotate(-4deg); }
+  75%     { transform: translateY(-20px) rotate(5deg);  }
+}
+
+/* ════════════════════════════════════════
+   MOBILE LAYOUT  (default / < 900px)
+   Single card, centred
+════════════════════════════════════════ */
+.page-wrap {
+  position: relative; z-index: 1;
+  display: flex; align-items: flex-start; justify-content: center;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+.card {
+  background: var(--white);
+  border-radius: 32px;
+  box-shadow: 0 20px 80px rgba(60,30,30,0.09), 0 4px 20px rgba(60,30,30,0.06);
+  width: 100%; max-width: 520px;
+  overflow: hidden;
+}
+
+/* ── HEADER ── */
+.card-header {
+  position: relative; text-align: center;
+  padding: 0 0 44px;
+  background: linear-gradient(165deg, var(--girl-light) 0%, var(--boy-light) 100%);
+  overflow: hidden;
+}
+.header-svg {
+  position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;
+}
+.header-content { position: relative; z-index: 1; padding: 2.2rem 2rem 0; }
+.header-wave { position: absolute; bottom: -1px; left:0; right:0; line-height:0; }
+.header-wave svg { display: block; width: 100%; }
+
+.header-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.72); backdrop-filter: blur(4px);
+  border-radius: 50px; padding: 5px 14px;
+  font-size: 0.73rem; font-weight: 800; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 0.9rem;
+}
+.title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem; line-height: 1.15; color: #3a2230; margin-bottom: 0.3rem;
+}
+.title em { font-style: italic; color: var(--girl-dark); }
+.header-icons {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; margin-top: 0.9rem; font-size: 1.45rem; line-height: 1;
+}
+.divider-dot { font-size: 0.45rem; opacity: 0.4; color: #7a5560; }
+
+/* ── CARD BODY ── */
+.card-body { padding: 1.8rem 1.8rem 2rem; }
+
+/* ── TOP ROW: live badge + total ── */
+.live-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.3rem;
+}
+.live-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 0.72rem; color: var(--muted); font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.pulse-dot {
+  width: 8px; height: 8px; background: #5acc8a; border-radius: 50%;
+  flex-shrink: 0; animation: pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 0   rgba(90,204,138,0.55); }
+  50%     { box-shadow: 0 0 0 7px rgba(90,204,138,0); }
+}
+.total-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--soft); border-radius: 50px; padding: 4px 13px;
+  font-size: 0.76rem; color: var(--muted); font-weight: 700;
+}
+.total-pill strong { color: var(--text); }
+
+/* ── WINNER BANNER ── */
+.winner-banner {
+  border-radius: 20px; padding: 1.3rem 1.2rem; text-align: center;
+  margin-bottom: 1.5rem;
+  transition: opacity 0.5s, transform 0.5s;
+  opacity: 0; transform: scale(0.96);
+  position: relative; overflow: hidden;
+}
+.winner-banner.visible { opacity: 1; transform: scale(1); }
+.winner-banner.boy   { background: linear-gradient(135deg, #daeeff, #c0e0ff); }
+.winner-banner.girl  { background: linear-gradient(135deg, #ffe0ef, #ffc9e0); }
+.winner-banner.tie   { background: linear-gradient(135deg, #ffe0ef, #daeeff); }
+.winner-banner.empty { background: var(--soft); }
+.winner-banner::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(circle at 90% 10%, rgba(255,255,255,0.5) 0%, transparent 55%);
+}
+.winner-emoji-row {
+  font-size: 2.2rem; margin-bottom: 0.45rem; line-height: 1;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.winner-label {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.35rem; font-weight: 700; margin-bottom: 3px;
+}
+.boy   .winner-label { color: var(--boy-dark);  }
+.girl  .winner-label { color: var(--girl-dark); }
+.tie   .winner-label { color: var(--text);      }
+.empty .winner-label { color: var(--muted);     }
+.winner-sub {
+  font-size: 0.76rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.07em; opacity: 0.7;
+}
+.boy   .winner-sub { color: var(--boy-dark);  }
+.girl  .winner-sub { color: var(--girl-dark); }
+.tie   .winner-sub,
+.empty .winner-sub { color: var(--muted); }
+
+/* ── BAR CHART ── */
+.chart-section { margin-bottom: 1.4rem; }
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 62px;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.2rem;
+}
+.bar-label {
+  display: flex; align-items: center; justify-content: flex-end; gap: 6px;
+  font-size: 1.15rem; font-weight: 700; white-space: nowrap;
+}
+.bar-label .lbl-emoji { font-size: 1.9rem; }
+.bar-label .lbl-text.boy  { color: var(--boy-dark);  }
+.bar-label .lbl-text.girl { color: var(--girl-dark); }
+
+.bar-track {
+  background: var(--soft); border-radius: 50px;
+  height: 72px; overflow: hidden; position: relative;
+}
+.bar-fill {
+  height: 100%; border-radius: 50px; width: 0%;
+  transition: width 0.95s cubic-bezier(0.34, 1.1, 0.64, 1);
+  display: flex; align-items: center; padding: 0 20px;
+  position: relative; overflow: hidden;
+}
+.bar-fill::after {
+  content: ''; position: absolute; top:0; left:-60%; width:55%; height:100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.28), transparent);
+  animation: shimmer 2.6s ease-in-out infinite;
+}
+@keyframes shimmer { 0%{left:-60%} 100%{left:120%} }
+
+.bar-fill.boy  { background: linear-gradient(90deg, var(--boy-mid),  var(--boy));  justify-content: flex-end; }
+.bar-fill.girl { background: linear-gradient(90deg, var(--girl-mid), var(--girl)); justify-content: flex-end; }
+
+.bar-inner {
+  display: flex; flex-direction: column; align-items: flex-end;
+  gap: 1px; opacity: 0; transition: opacity 0.3s 0.65s;
+}
+.bar-inner.visible { opacity: 1; }
+
+.bar-count-num {
+  font-size: 1.6rem; font-weight: 800; color: white; line-height: 1;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.18);
+}
+.bar-count-sub {
+  font-size: 0.65rem; font-weight: 700; color: rgba(255,255,255,0.82);
+  text-transform: uppercase; letter-spacing: 0.07em;
+}
+
+.bar-pct {
+  font-size: 1.3rem; font-weight: 800; text-align: left; white-space: nowrap;
+}
+.bar-pct.boy  { color: var(--boy);  }
+.bar-pct.girl { color: var(--girl); }
+
+/* ── STAT CARDS ── */
+.stats-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.stat-card {
+  border-radius: 18px; padding: 1.1rem 1rem; text-align: center;
+}
+.stat-card.boy  { background: var(--boy-light);  }
+.stat-card.girl { background: var(--girl-light); }
+.stat-card-emoji { font-size: 2rem; display: block; margin-bottom: 6px; }
+.stat-card-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.6rem; font-weight: 700; display: block; line-height: 1;
+}
+.stat-card.boy  .stat-card-num   { color: var(--boy-dark);  }
+.stat-card.girl .stat-card-num   { color: var(--girl-dark); }
+.stat-card-label {
+  font-size: 0.82rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.09em; margin-top: 4px; display: block;
+}
+.stat-card.boy  .stat-card-label { color: var(--boy);  }
+.stat-card.girl .stat-card-label { color: var(--girl); }
+
+/* ── FOOTER STRIP ── */
+.baby-strip {
+  text-align: center; padding: 1rem 0 0;
+  border-top: 1.5px dashed #e8d8ce; margin-top: 1.5rem;
+  font-size: 1.25rem; letter-spacing: 5px; opacity: 0.45;
+}
+
+/* ── CONFETTI ── */
+.confetti-piece {
+  position: fixed; border-radius: 2px; z-index: 999;
+  animation: confettiFall linear forwards;
+}
+@keyframes confettiFall {
+  0%   { transform: translateY(-20px) rotate(0deg);    opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg);  opacity: 0; }
+}
+
+/* ════════════════════════════════════════
+   DESKTOP LAYOUT  (≥ 900px)
+   Two-column: left panel | right chart panel
+════════════════════════════════════════ */
+@media (min-width: 900px) {
+
+  body { overflow: hidden; height: 100vh; }
+
+  /* Hide mobile card entirely on desktop */
+  .page-wrap { display: none; }
+
+  /* Desktop shell pinned to full viewport */
+  .desktop-shell {
+    display: flex;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 1;
+  }
+
+  /* ─── LEFT PANEL ─── */
+  .panel-left {
+    width: 360px;
+    flex-shrink: 0;
+    background: linear-gradient(175deg, var(--girl-light) 0%, var(--boy-light) 100%);
+    position: relative;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Decorative SVG bubbles in left panel */
+  .panel-left-deco {
+    position: absolute; inset: 0; pointer-events: none;
+  }
+
+  .panel-left-content {
+    position: relative; z-index: 1;
+    padding: 3rem 2.5rem;
+    display: flex; flex-direction: column;
+    height: 100%;
+  }
+
+  .panel-left .header-badge {
+    background: rgba(255,255,255,0.6);
+    margin-bottom: 1.2rem;
+    align-self: flex-start;
+  }
+
+  .panel-left .title {
+    font-size: 3rem; margin-bottom: 0.5rem;
+  }
+
+  .panel-left .header-icons {
+    justify-content: flex-start; font-size: 1.8rem; margin-top: 0.8rem;
+  }
+
+  /* Winner block inside left panel */
+  .panel-winner {
+    margin-top: 2rem;
+    border-radius: 22px; padding: 1.8rem 1.5rem; text-align: left;
+    position: relative; overflow: hidden;
+    transition: opacity 0.5s, transform 0.5s;
+    opacity: 0; transform: translateY(8px);
+  }
+  .panel-winner.visible { opacity: 1; transform: translateY(0); }
+  .panel-winner.boy   { background: rgba(255,255,255,0.55); }
+  .panel-winner.girl  { background: rgba(255,255,255,0.55); }
+  .panel-winner.tie   { background: rgba(255,255,255,0.45); }
+  .panel-winner.empty { background: rgba(255,255,255,0.35); }
+
+  .panel-winner .winner-emoji-row {
+    justify-content: flex-start; font-size: 2.8rem; margin-bottom: 0.6rem;
+  }
+  .panel-winner .winner-label { font-size: 1.7rem; }
+  .panel-winner .winner-sub   { font-size: 0.82rem; }
+
+  /* Stat cards in left panel — stacked */
+  .panel-stats {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    margin-top: auto; padding-top: 2rem;
+  }
+  .panel-stats .stat-card { border-radius: 20px; padding: 1.6rem 1rem; }
+  .panel-stats .stat-card-emoji { font-size: 2.4rem; }
+  .panel-stats .stat-card-num   { font-size: 3.2rem; }
+  .panel-stats .stat-card-label { font-size: 0.88rem; }
+
+  /* Live badge at bottom of left panel */
+  .panel-live-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 1.2rem;
+  }
+  .panel-live-row .live-badge { font-size: 0.72rem; }
+  .panel-live-row .total-pill { font-size: 0.78rem; }
+
+  /* ─── RIGHT PANEL ─── */
+  .panel-right {
+    flex: 1;
+    min-width: 0;
+    background: var(--white);
+    display: flex; flex-direction: column;
+    padding: 3rem 3.5rem;
+    overflow: auto;
+  }
+
+  .panel-right-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.1em;
+    margin-bottom: 2.5rem;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .panel-right-title::after {
+    content: ''; flex: 1; height: 1.5px;
+    background: linear-gradient(90deg, var(--soft), transparent);
+  }
+
+  /* Desktop bar chart — vertical bars fill the height */
+  .desktop-chart {
+    flex: 1;
+    display: flex; flex-direction: column;
+    justify-content: center;
+    gap: 3rem;
+  }
+
+  .desktop-bar-row {
+    display: grid;
+    grid-template-columns: 160px 1fr 90px;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .desktop-bar-label {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+  }
+  .desktop-bar-label .d-emoji { font-size: 4rem; line-height: 1; }
+  .desktop-bar-label .d-name  {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; font-weight: 700;
+  }
+  .desktop-bar-label .d-name.boy  { color: var(--boy-dark);  }
+  .desktop-bar-label .d-name.girl { color: var(--girl-dark); }
+
+  .desktop-bar-track {
+    background: var(--soft); border-radius: 50px;
+    height: 130px; overflow: hidden; position: relative;
+  }
+  .desktop-bar-fill {
+    height: 100%; border-radius: 50px; width: 0%;
+    transition: width 1s cubic-bezier(0.34, 1.1, 0.64, 1);
+    display: flex; align-items: center; padding: 0 28px;
+    position: relative; overflow: hidden;
+  }
+  .desktop-bar-fill::after {
+    content: ''; position: absolute; top:0; left:-60%; width:55%; height:100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.28), transparent);
+    animation: shimmer 2.6s ease-in-out infinite;
+  }
+  .desktop-bar-fill.boy  {
+    background: linear-gradient(90deg, var(--boy-mid), var(--boy));
+    justify-content: flex-end;
+  }
+  .desktop-bar-fill.girl {
+    background: linear-gradient(90deg, var(--girl-mid), var(--girl));
+    justify-content: flex-end;
+  }
+
+  .desktop-bar-inner {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+    opacity: 0; transition: opacity 0.3s 0.7s;
+  }
+  .desktop-bar-inner.visible { opacity: 1; }
+
+  .d-count-num {
+    font-size: 3rem; font-weight: 800; color: white; line-height: 1;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  }
+  .d-count-sub {
+    font-size: 0.9rem; font-weight: 700; color: rgba(255,255,255,0.85);
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+
+  .desktop-bar-pct {
+    font-size: 2rem; font-weight: 800; text-align: left; white-space: nowrap;
+  }
+  .desktop-bar-pct.boy  { color: var(--boy);  }
+  .desktop-bar-pct.girl { color: var(--girl); }
+
+  /* Baby strip on right panel bottom */
+  .panel-right .baby-strip {
+    margin-top: 2rem; padding-top: 1.2rem;
+  }
+}
+
+/* Hide desktop shell on mobile */
+.desktop-shell { display: none; }
+@media (min-width: 900px) {
+  .desktop-shell { display: flex; }
+}
+</style>
+</head>
+<body>
+
+<!-- Floating baby elements -->
+<div class="bg-floats" aria-hidden="true">
+  <span class="float-item" style="top:4%;left:3%;font-size:2rem;animation-duration:7s;animation-delay:0s">🍼</span>
+  <span class="float-item" style="top:9%;right:4%;font-size:1.4rem;animation-duration:9s;animation-delay:1.2s">⭐</span>
+  <span class="float-item" style="top:20%;left:7%;font-size:1.2rem;animation-duration:8s;animation-delay:0.4s">🌸</span>
+  <span class="float-item" style="top:24%;right:8%;font-size:1.6rem;animation-duration:6.5s;animation-delay:2s">🧸</span>
+  <span class="float-item" style="top:38%;left:2%;font-size:1.3rem;animation-duration:10s;animation-delay:0.8s">🌙</span>
+  <span class="float-item" style="top:45%;right:3%;font-size:1.5rem;animation-duration:7.5s;animation-delay:1.5s">💫</span>
+  <span class="float-item" style="top:58%;left:5%;font-size:1.2rem;animation-duration:8.5s;animation-delay:3s">🎀</span>
+  <span class="float-item" style="top:64%;right:6%;font-size:1.8rem;animation-duration:6s;animation-delay:0.5s">🐣</span>
+  <span class="float-item" style="bottom:18%;left:4%;font-size:1.4rem;animation-duration:9s;animation-delay:1s">🌷</span>
+  <span class="float-item" style="bottom:11%;right:4%;font-size:1.3rem;animation-duration:7s;animation-delay:2.5s">✨</span>
+  <span class="float-item" style="bottom:5%;left:9%;font-size:1.1rem;animation-duration:8s;animation-delay:1.8s">🦋</span>
+  <span class="float-item" style="bottom:4%;right:10%;font-size:1.2rem;animation-duration:10s;animation-delay:0.2s">🌟</span>
+</div>
+
+<!-- ══════════ MOBILE CARD ══════════ -->
+<div class="page-wrap">
+  <div class="card">
+    <div class="card-header">
+      <svg class="header-svg" viewBox="0 0 500 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="30"  cy="30"  r="4"   fill="rgba(255,255,255,0.4)"/>
+        <circle cx="470" cy="25"  r="3"   fill="rgba(255,255,255,0.3)"/>
+        <circle cx="60"  cy="160" r="5"   fill="rgba(255,255,255,0.25)"/>
+        <circle cx="440" cy="155" r="4"   fill="rgba(255,255,255,0.3)"/>
+        <circle cx="250" cy="15"  r="3"   fill="rgba(255,255,255,0.35)"/>
+        <circle cx="120" cy="80"  r="2.5" fill="rgba(255,255,255,0.2)"/>
+        <circle cx="380" cy="90"  r="3"   fill="rgba(255,255,255,0.2)"/>
+        <line x1="455" y1="55"  x2="455" y2="65"  stroke="rgba(255,255,255,0.35)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="450" y1="60"  x2="460" y2="60"  stroke="rgba(255,255,255,0.35)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="50"  y1="105" x2="50"  y2="113" stroke="rgba(255,255,255,0.3)"  stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="46"  y1="109" x2="54"  y2="109" stroke="rgba(255,255,255,0.3)"  stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <div class="header-content">
+        <div class="header-badge">📊 Live Results</div>
+        <h1 class="title">The Votes<br>Are <em>In!</em></h1>
+        <div class="header-icons">
+          <span>💙</span><span class="divider-dot">●</span>
+          <span>👶</span><span class="divider-dot">●</span>
+          <span>💗</span>
+        </div>
+      </div>
+      <div class="header-wave">
+        <svg viewBox="0 0 500 44" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,44 L0,22 Q25,0 50,22 Q75,44 100,22 Q125,0 150,22 Q175,44 200,22 Q225,0 250,22 Q275,44 300,22 Q325,0 350,22 Q375,44 400,22 Q425,0 450,22 Q475,44 500,22 L500,44 Z" fill="white"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="live-row">
+        <div class="live-badge"><span class="pulse-dot"></span>Live · Auto-refreshing</div>
+        <div class="total-pill">🗳️ <strong id="m-totalVotes">0</strong> votes</div>
+      </div>
+
+      <div class="winner-banner empty" id="m-winnerBanner">
+        <div class="winner-emoji-row" id="m-winnerEmojiRow">👶</div>
+        <div class="winner-label"     id="m-winnerLabel">Waiting for votes…</div>
+        <div class="winner-sub"       id="m-winnerSub">Be the first to cast your vote</div>
+      </div>
+
+      <div class="chart-section">
+        <div class="bar-row">
+          <div class="bar-label">
+            <span class="lbl-emoji">👦</span>
+            <span class="lbl-text boy">Boy</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill boy" id="m-boyBar">
+              <div class="bar-inner" id="m-boyInner">
+                <span class="bar-count-num" id="m-boyNum">0</span>
+                <span class="bar-count-sub">votes</span>
+              </div>
+            </div>
+          </div>
+          <div class="bar-pct boy" id="m-boyPct">0%</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">
+            <span class="lbl-emoji">👧</span>
+            <span class="lbl-text girl">Girl</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill girl" id="m-girlBar">
+              <div class="bar-inner" id="m-girlInner">
+                <span class="bar-count-num" id="m-girlNum">0</span>
+                <span class="bar-count-sub">votes</span>
+              </div>
+            </div>
+          </div>
+          <div class="bar-pct girl" id="m-girlPct">0%</div>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card boy">
+          <span class="stat-card-emoji">🚀</span>
+          <span class="stat-card-num"   id="m-boyStatNum">0</span>
+          <span class="stat-card-label">Votes for Boy</span>
+        </div>
+        <div class="stat-card girl">
+          <span class="stat-card-emoji">🌺</span>
+          <span class="stat-card-num"   id="m-girlStatNum">0</span>
+          <span class="stat-card-label">Votes for Girl</span>
+        </div>
+      </div>
+
+      <div class="baby-strip" aria-hidden="true">🍼 🌸 🐣 🧸 🌙 ✨ 🎀</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ DESKTOP SHELL ══════════ -->
+<div class="desktop-shell">
+
+  <!-- LEFT PANEL -->
+  <div class="panel-left">
+    <svg class="panel-left-deco" viewBox="0 0 380 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="340" cy="80"  r="60"  fill="rgba(255,255,255,0.12)"/>
+      <circle cx="360" cy="400" r="90"  fill="rgba(255,255,255,0.09)"/>
+      <circle cx="20"  cy="600" r="50"  fill="rgba(255,255,255,0.1)"/>
+      <circle cx="300" cy="820" r="70"  fill="rgba(255,255,255,0.08)"/>
+      <circle cx="60"  cy="200" r="30"  fill="rgba(255,255,255,0.1)"/>
+    </svg>
+
+    <div class="panel-left-content">
+      <div class="header-badge">📊 Live Results</div>
+      <h1 class="title">The Votes<br>Are <em>In!</em></h1>
+      <div class="header-icons">
+        <span>💙</span><span class="divider-dot">●</span>
+        <span>👶</span><span class="divider-dot">●</span>
+        <span>💗</span>
+      </div>
+
+      <div class="panel-winner empty winner-banner" id="d-winnerBanner">
+        <div class="winner-emoji-row" id="d-winnerEmojiRow">👶</div>
+        <div class="winner-label"     id="d-winnerLabel">Waiting for votes…</div>
+        <div class="winner-sub"       id="d-winnerSub">Be the first to cast your vote</div>
+      </div>
+
+      <div class="panel-stats stats-row">
+        <div class="stat-card boy">
+          <span class="stat-card-emoji">🚀</span>
+          <span class="stat-card-num"   id="d-boyStatNum">0</span>
+          <span class="stat-card-label">Votes for Boy</span>
+        </div>
+        <div class="stat-card girl">
+          <span class="stat-card-emoji">🌺</span>
+          <span class="stat-card-num"   id="d-girlStatNum">0</span>
+          <span class="stat-card-label">Votes for Girl</span>
+        </div>
+      </div>
+
+      <div class="panel-live-row live-row" style="margin-top:1.2rem">
+        <div class="live-badge"><span class="pulse-dot"></span>Live · Auto-refreshing</div>
+        <div class="total-pill">🗳️ <strong id="d-totalVotes">0</strong> votes</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="panel-right">
+    <div class="panel-right-title">Vote breakdown</div>
+
+    <div class="desktop-chart">
+
+      <div class="desktop-bar-row">
+        <div class="desktop-bar-label">
+          <span class="d-emoji">👦🏻</span>
+          <span class="d-name boy">Boy</span>
+        </div>
+        <div class="desktop-bar-track">
+          <div class="desktop-bar-fill boy" id="d-boyBar">
+            <div class="desktop-bar-inner" id="d-boyInner">
+              <span class="d-count-num" id="d-boyNum">0</span>
+              <span class="d-count-sub">votes</span>
+            </div>
+          </div>
+        </div>
+        <div class="desktop-bar-pct boy" id="d-boyPct">0%</div>
+      </div>
+
+      <div class="desktop-bar-row">
+        <div class="desktop-bar-label">
+          <span class="d-emoji">👧🏻</span>
+          <span class="d-name girl">Girl</span>
+        </div>
+        <div class="desktop-bar-track">
+          <div class="desktop-bar-fill girl" id="d-girlBar">
+            <div class="desktop-bar-inner" id="d-girlInner">
+              <span class="d-count-num" id="d-girlNum">0</span>
+              <span class="d-count-sub">votes</span>
+            </div>
+          </div>
+        </div>
+        <div class="desktop-bar-pct girl" id="d-girlPct">0%</div>
+      </div>
+
+    </div>
+
+    <div class="baby-strip" aria-hidden="true">🍼 🌸 🐣 🧸 🌙 ✨ 🎀</div>
+  </div>
+
+</div>
+
+<!-- ══════════ CONFETTI ══════════ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+// ── PASTE YOUR FIREBASE CONFIG BELOW (same as vote.html) ──────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyCBYus9TNUDfkEa-FgUPn_XyCl_5i3OzIA",
+  authDomain: "genderrevealkw-7eea1.firebaseapp.com",
+  databaseURL: "https://genderrevealkw-7eea1-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "genderrevealkw-7eea1",
+  storageBucket: "genderrevealkw-7eea1.firebasestorage.app",
+  messagingSenderId: "1025994664731",
+  appId: "1:1025994664731:web:5abf4895b8c37984be81be",
+  measurementId: "G-14VZGJL4CE"
+};
+// ──────────────────────────────────────────────────────────────────────────
+
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
+let confettiFired = false;
+
+function fireConfetti(c1, c2) {
+  if (confettiFired) return;
+  confettiFired = true;
+  const cols = [c1, c2, '#fff', '#ffd700'];
+  for (let i = 0; i < 80; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.cssText = `
+      left:${Math.random()*100}vw; top:-14px;
+      background:${cols[Math.floor(Math.random()*cols.length)]};
+      width:${5+Math.random()*10}px; height:${5+Math.random()*10}px;
+      animation-duration:${2+Math.random()*2.5}s;
+      animation-delay:${Math.random()*1.2}s;
+      border-radius:${Math.random()>.5?'50%':'3px'};
+    `;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 5500);
+  }
+}
+
+function updateBanner(prefix, boys, girls, boyPct, girlPct, total) {
+  const banner = document.getElementById(`${prefix}-winnerBanner`);
+  const emoRow = document.getElementById(`${prefix}-winnerEmojiRow`);
+  const label  = document.getElementById(`${prefix}-winnerLabel`);
+  const sub    = document.getElementById(`${prefix}-winnerSub`);
+  banner.className = (prefix === 'd')
+    ? 'panel-winner winner-banner visible'
+    : 'winner-banner visible';
+
+  if (total === 0) {
+    banner.classList.add('empty');
+    emoRow.textContent = '👶';
+    label.textContent  = 'No votes yet!';
+    sub.textContent    = 'Be the first to cast your vote';
+  } else if (boys === girls) {
+    banner.classList.add('tie');
+    emoRow.innerHTML   = '💙 🤝 💗';
+    label.textContent  = "It's a Perfect Tie!";
+    sub.textContent    = `${boys} votes each — too close to call`;
+  } else if (boys > girls) {
+    banner.classList.add('boy');
+    emoRow.innerHTML   = '💙 👦 💙';
+    label.textContent  = 'Team Boy is Leading!';
+    sub.textContent    = `${boyPct}% of votes say BOY`;
+    fireConfetti('#4a9de0', '#9dcef5');
+  } else {
+    banner.classList.add('girl');
+    emoRow.innerHTML   = '💗 👧 💗';
+    label.textContent  = 'Team Girl is Leading!';
+    sub.textContent    = `${girlPct}% of votes say GIRL`;
+    fireConfetti('#e96fa4', '#f5a8cc');
+  }
+}
+
+onValue(ref(db, 'votes'), (snap) => {
+  const data  = snap.val() || {};
+  const boys  = data.boy  || 0;
+  const girls = data.girl || 0;
+  const total = boys + girls;
+  const boyPct  = total > 0 ? Math.round((boys  / total) * 100) : 0;
+  const girlPct = total > 0 ? 100 - boyPct : 0;
+
+  // ── MOBILE updates ──
+  document.getElementById('m-totalVotes').textContent  = total;
+  document.getElementById('m-boyStatNum').textContent  = boys;
+  document.getElementById('m-girlStatNum').textContent = girls;
+  document.getElementById('m-boyBar').style.width      = boyPct  + '%';
+  document.getElementById('m-girlBar').style.width     = girlPct + '%';
+  document.getElementById('m-boyNum').textContent      = boys;
+  document.getElementById('m-girlNum').textContent     = girls;
+  document.getElementById('m-boyPct').textContent      = boyPct  + '%';
+  document.getElementById('m-girlPct').textContent     = girlPct + '%';
+  document.getElementById('m-boyInner').classList.toggle('visible',  boyPct  > 10);
+  document.getElementById('m-girlInner').classList.toggle('visible', girlPct > 10);
+  updateBanner('m', boys, girls, boyPct, girlPct, total);
+
+  // ── DESKTOP updates ──
+  document.getElementById('d-totalVotes').textContent  = total;
+  document.getElementById('d-boyStatNum').textContent  = boys;
+  document.getElementById('d-girlStatNum').textContent = girls;
+  document.getElementById('d-boyBar').style.width      = boyPct  + '%';
+  document.getElementById('d-girlBar').style.width     = girlPct + '%';
+  document.getElementById('d-boyNum').textContent      = boys;
+  document.getElementById('d-girlNum').textContent     = girls;
+  document.getElementById('d-boyPct').textContent      = boyPct  + '%';
+  document.getElementById('d-girlPct').textContent     = girlPct + '%';
+  document.getElementById('d-boyInner').classList.toggle('visible',  boyPct  > 8);
+  document.getElementById('d-girlInner').classList.toggle('visible', girlPct > 8);
+  updateBanner('d', boys, girls, boyPct, girlPct, total);
+});
+</script>
+</body>
+</html>

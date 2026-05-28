@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baby Gender Vote 👶</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --boy:       #4a9de0;
+  --boy-light: #daeeff;
+  --boy-mid:   #9dcef5;
+  --boy-dark:  #1b4f80;
+  --girl:      #e96fa4;
+  --girl-light:#ffe0ef;
+  --girl-mid:  #f5a8cc;
+  --girl-dark: #8b2252;
+  --cream:     #fdf7f2;
+  --soft:      #f5ede6;
+  --text:      #3b2b2b;
+  --muted:     #9a7f7f;
+  --white:     #ffffff;
+}
+
+html, body { min-height: 100%; font-family: 'Nunito', sans-serif; }
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background: var(--cream);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ── TILED BACKGROUND PATTERN ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 15% 15%, rgba(74,157,224,0.13) 0%, transparent 45%),
+    radial-gradient(circle at 85% 85%, rgba(233,111,164,0.13) 0%, transparent 45%),
+    radial-gradient(circle at 80% 15%, rgba(233,111,164,0.07) 0%, transparent 35%),
+    radial-gradient(circle at 20% 80%, rgba(74,157,224,0.07) 0%, transparent 35%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── FLOATING BABY ELEMENTS ── */
+.bg-floats {
+  position: fixed; inset: 0;
+  pointer-events: none; overflow: hidden; z-index: 0;
+}
+.float-item {
+  position: absolute;
+  font-size: 1.6rem;
+  opacity: 0.15;
+  animation: gentleFloat linear infinite;
+  user-select: none;
+}
+@keyframes gentleFloat {
+  0%   { transform: translateY(0)   rotate(0deg);   }
+  25%  { transform: translateY(-14px) rotate(5deg);  }
+  50%  { transform: translateY(-6px) rotate(-3deg); }
+  75%  { transform: translateY(-18px) rotate(4deg);  }
+  100% { transform: translateY(0)   rotate(0deg);   }
+}
+
+/* ── CARD ── */
+.card {
+  position: relative; z-index: 1;
+  background: var(--white);
+  border-radius: 32px;
+  box-shadow:
+    0 2px 0 rgba(255,255,255,0.9) inset,
+    0 20px 80px rgba(60,30,30,0.09),
+    0 4px 20px rgba(60,30,30,0.06);
+  max-width: 500px;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* ── HEADER ── */
+.card-header {
+  position: relative;
+  padding: 0 0 44px;
+  text-align: center;
+  background: linear-gradient(165deg, var(--girl-light) 0%, var(--boy-light) 100%);
+  overflow: hidden;
+}
+
+/* SVG banner decorations */
+.header-svg {
+  position: absolute; top: 0; left: 0; right: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+
+.header-content {
+  position: relative;
+  padding: 2.5rem 2rem 0;
+  z-index: 1;
+}
+
+/* Wave scallop at bottom of header */
+.header-wave {
+  position: absolute;
+  bottom: -1px; left: 0; right: 0;
+  line-height: 0;
+}
+.header-wave svg { display: block; width: 100%; }
+
+.header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(4px);
+  border-radius: 50px;
+  padding: 5px 14px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.4rem;
+  line-height: 1.15;
+  color: #3a2230;
+  margin-bottom: 0.4rem;
+}
+
+.title em { font-style: italic; color: var(--girl-dark); }
+
+.header-icons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 1rem;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.header-icons .divider-dot { font-size: 0.5rem; opacity: 0.4; color: #7a5560; }
+
+/* ── BODY ── */
+.card-body {
+  padding: 2rem 2rem 2.2rem;
+}
+
+.question-block {
+  text-align: center;
+  margin-bottom: 1.8rem;
+}
+.question-block p {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  font-style: italic;
+  color: var(--text);
+  line-height: 1.5;
+}
+.question-block .sub {
+  font-family: 'Nunito', sans-serif;
+  font-style: normal;
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-top: 0.3rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ── CHOICE CARDS ── */
+.choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 1.6rem;
+}
+
+.choice-label { cursor: pointer; display: block; }
+.choice-label input[type="radio"] { position: absolute; opacity: 0; pointer-events: none; }
+
+.choice-card {
+  border-radius: 22px;
+  padding: 1.8rem 1rem 1.5rem;
+  text-align: center;
+  border: 2.5px solid transparent;
+  transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.boy-card  { background: var(--boy-light);  }
+.girl-card { background: var(--girl-light); }
+
+/* Inner glow ring on select */
+.choice-label input:checked + .boy-card {
+  border-color: var(--boy);
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 10px 32px rgba(74,157,224,0.28), 0 2px 8px rgba(74,157,224,0.15);
+}
+.choice-label input:checked + .girl-card {
+  border-color: var(--girl);
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 10px 32px rgba(233,111,164,0.28), 0 2px 8px rgba(233,111,164,0.15);
+}
+.choice-card:hover { transform: translateY(-3px); }
+
+/* Big emoji inside card */
+.choice-emoji-wrap {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 0.9rem;
+}
+.choice-big-emoji  { font-size: 3.8rem; line-height: 1; display: block; }
+
+/* Bubble behind emoji */
+.choice-emoji-wrap::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 70px; height: 70px;
+  border-radius: 50%;
+  z-index: 0;
+}
+.boy-card  .choice-emoji-wrap::before { background: rgba(74,157,224,0.14); }
+.girl-card .choice-emoji-wrap::before { background: rgba(233,111,164,0.14); }
+.choice-big-emoji { position: relative; z-index: 1; }
+
+.choice-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.55rem;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 4px;
+}
+.boy-card  .choice-name { color: var(--boy-dark);  }
+.girl-card .choice-name { color: var(--girl-dark); }
+
+.choice-tagline {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: block;
+}
+.boy-card  .choice-tagline { color: var(--boy);  }
+.girl-card .choice-tagline { color: var(--girl); }
+
+/* Tick badge on selected */
+.choice-tick {
+  position: absolute;
+  top: 10px; right: 10px;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem;
+  opacity: 0;
+  transition: opacity 0.2s 0.1s;
+  color: white;
+}
+.boy-card  .choice-tick { background: var(--boy);  }
+.girl-card .choice-tick { background: var(--girl); }
+.choice-label input:checked + .boy-card  .choice-tick,
+.choice-label input:checked + .girl-card .choice-tick { opacity: 1; }
+
+/* ── SUBMIT ── */
+.submit-btn {
+  width: 100%;
+  padding: 1.05rem 1rem;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(110deg, var(--girl) 0%, #c45fd5 50%, var(--boy) 100%);
+  background-size: 200% auto;
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: all 0.25s;
+  box-shadow: 0 6px 24px rgba(180,60,150,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.submit-btn:hover  { background-position: right center; transform: translateY(-2px); box-shadow: 0 10px 32px rgba(180,60,150,0.3); }
+.submit-btn:active { transform: translateY(0); }
+.submit-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+/* ── FOOTER NOTE ── */
+.footer-note {
+  text-align: center;
+  margin-top: 1.1rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.footer-note a {
+  color: var(--girl);
+  text-decoration: none;
+  font-weight: 700;
+}
+.footer-note a:hover { text-decoration: underline; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 2rem; left: 50%;
+  transform: translateX(-50%) translateY(120px);
+  background: #2e1f1f;
+  color: white;
+  padding: 0.8rem 1.6rem;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 200;
+  white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ── ALREADY VOTED SCREEN ── */
+.voted-screen {
+  display: none;
+  text-align: center;
+  padding: 2.5rem 2rem;
+}
+.voted-screen.active { display: block; }
+.card-body.hidden { display: none; }
+.voted-big { font-size: 4rem; margin-bottom: 1rem; }
+.voted-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  color: var(--text);
+  margin-bottom: 0.6rem;
+}
+.voted-sub { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+.voted-sub a { color: var(--girl); font-weight: 700; text-decoration: none; }
+.voted-sub a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<!-- Floating baby elements in background -->
+<div class="bg-floats" aria-hidden="true">
+  <span class="float-item" style="top:4%;  left:3%;  font-size:2rem;  animation-duration:7s;  animation-delay:0s">🍼</span>
+  <span class="float-item" style="top:8%;  right:5%; font-size:1.4rem; animation-duration:9s;  animation-delay:1.2s">⭐</span>
+  <span class="float-item" style="top:18%; left:8%;  font-size:1.2rem; animation-duration:8s;  animation-delay:0.4s">🌸</span>
+  <span class="float-item" style="top:22%; right:9%; font-size:1.6rem; animation-duration:6.5s;animation-delay:2s">🧸</span>
+  <span class="float-item" style="top:35%; left:2%;  font-size:1.3rem; animation-duration:10s; animation-delay:0.8s">🌙</span>
+  <span class="float-item" style="top:42%; right:3%; font-size:1.5rem; animation-duration:7.5s;animation-delay:1.5s">💫</span>
+  <span class="float-item" style="top:55%; left:6%;  font-size:1.2rem; animation-duration:8.5s;animation-delay:3s">🎀</span>
+  <span class="float-item" style="top:62%; right:7%; font-size:1.8rem; animation-duration:6s;  animation-delay:0.5s">🐣</span>
+  <span class="float-item" style="bottom:20%;left:4%; font-size:1.4rem; animation-duration:9s;  animation-delay:1s">🌷</span>
+  <span class="float-item" style="bottom:12%;right:4%;font-size:1.3rem; animation-duration:7s;  animation-delay:2.5s">✨</span>
+  <span class="float-item" style="bottom:6%; left:10%;font-size:1.1rem; animation-duration:8s;  animation-delay:1.8s">🦋</span>
+  <span class="float-item" style="bottom:5%; right:11%;font-size:1.2rem;animation-duration:10s; animation-delay:0.2s">🌟</span>
+</div>
+
+<div class="card">
+  <!-- HEADER -->
+  <div class="card-header">
+    <!-- Tiny decorative SVG stars/dots in header bg -->
+    <svg class="header-svg" viewBox="0 0 500 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="30"  cy="30"  r="4" fill="rgba(255,255,255,0.4)"/>
+      <circle cx="470" cy="25"  r="3" fill="rgba(255,255,255,0.3)"/>
+      <circle cx="60"  cy="160" r="5" fill="rgba(255,255,255,0.25)"/>
+      <circle cx="440" cy="155" r="4" fill="rgba(255,255,255,0.3)"/>
+      <circle cx="250" cy="15"  r="3" fill="rgba(255,255,255,0.35)"/>
+      <circle cx="120" cy="80"  r="2.5" fill="rgba(255,255,255,0.2)"/>
+      <circle cx="380" cy="90"  r="3" fill="rgba(255,255,255,0.2)"/>
+      <!-- sparkle lines -->
+      <line x1="455" y1="55"  x2="455" y2="65"  stroke="rgba(255,255,255,0.35)" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="450" y1="60"  x2="460" y2="60"  stroke="rgba(255,255,255,0.35)" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="50"  y1="105" x2="50"  y2="113" stroke="rgba(255,255,255,0.3)"  stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="46"  y1="109" x2="54"  y2="109" stroke="rgba(255,255,255,0.3)"  stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+
+    <div class="header-content">
+      <div class="header-badge">
+        <span>👶</span> Gender Reveal Vote
+      </div>
+      <h1 class="title">What will<br><em>Baby</em> be?</h1>
+      <div class="header-icons">
+        <span>💙</span>
+        <span class="divider-dot">●</span>
+        <span>🍼</span>
+        <span class="divider-dot">●</span>
+        <span>💗</span>
+      </div>
+    </div>
+
+    <!-- Scallop wave -->
+    <div class="header-wave">
+      <svg viewBox="0 0 500 44" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,44 L0,22 Q25,0 50,22 Q75,44 100,22 Q125,0 150,22 Q175,44 200,22 Q225,0 250,22 Q275,44 300,22 Q325,0 350,22 Q375,44 400,22 Q425,0 450,22 Q475,44 500,22 L500,44 Z" fill="white"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ALREADY VOTED fallback -->
+  <div class="voted-screen" id="votedScreen">
+    <div class="voted-big">🗳️</div>
+    <div class="voted-title">You've already voted!</div>
+    <p class="voted-sub">
+      Thanks for taking part in the gender reveal!<br>
+      <a href="results.html">See the live results →</a>
+    </p>
+  </div>
+
+  <!-- VOTE BODY -->
+  <div class="card-body" id="voteBody">
+    <div class="question-block">
+      <p>"What do you think — a baby boy or a baby girl?"</p>
+      <p class="sub">Choose one &amp; submit your guess</p>
+    </div>
+
+    <div class="choices">
+      <label class="choice-label">
+        <input type="radio" name="gender" value="boy" id="boy">
+        <div class="choice-card boy-card">
+          <div class="choice-tick">✓</div>
+          <div class="choice-emoji-wrap">
+            <span class="choice-big-emoji">👦</span>
+          </div>
+          <span class="choice-name">Boy</span>
+          <span class="choice-tagline">💙 Blue &amp; bold</span>
+        </div>
+      </label>
+
+      <label class="choice-label">
+        <input type="radio" name="gender" value="girl" id="girl">
+        <div class="choice-card girl-card">
+          <div class="choice-tick">✓</div>
+          <div class="choice-emoji-wrap">
+            <span class="choice-big-emoji">👧</span>
+          </div>
+          <span class="choice-name">Girl</span>
+          <span class="choice-tagline">💗 Pink &amp; pretty</span>
+        </div>
+      </label>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="submitVote()">
+      <span>✨</span> Cast My Vote <span>✨</span>
+    </button>
+
+    <p class="footer-note">
+      See how everyone voted on the <a href="results.html">results page →</a>
+    </p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  // ── PASTE YOUR FIREBASE CONFIG BELOW ──────────────────────────────────────
+  const firebaseConfig = {
+    apiKey: "AIzaSyCBYus9TNUDfkEa-FgUPn_XyCl_5i3OzIA",
+    authDomain: "genderrevealkw-7eea1.firebaseapp.com",
+    databaseURL: "https://genderrevealkw-7eea1-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "genderrevealkw-7eea1",
+    storageBucket: "genderrevealkw-7eea1.firebasestorage.app",
+    messagingSenderId: "1025994664731",
+    appId: "1:1025994664731:web:5abf4895b8c37984be81be",
+    measurementId: "G-14VZGJL4CE"
+  };
+  // ──────────────────────────────────────────────────────────────────────────
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getDatabase(app);
+
+  // One-vote-per-device via localStorage
+  if (localStorage.getItem('babyVoteCast')) {
+    document.getElementById('voteBody').classList.add('hidden');
+    document.getElementById('votedScreen').classList.add('active');
+  }
+
+  function showToast(msg, duration = 2800) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), duration);
+  }
+
+  window.submitVote = async function () {
+    const sel = document.querySelector('input[name="gender"]:checked');
+    if (!sel) { showToast('Please pick Boy or Girl first! 😊'); return; }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span>⏳</span> Submitting…';
+
+    try {
+      await runTransaction(ref(db, `votes/${sel.value}`), (c) => (c || 0) + 1);
+      localStorage.setItem('babyVoteCast', '1');
+      showToast(sel.value === 'boy' ? '💙 Vote for Boy recorded!' : '💗 Vote for Girl recorded!');
+      btn.innerHTML = '<span>✓</span> Voted!';
+      setTimeout(() => { window.location.href = 'results.html'; }, 1800);
+    } catch (e) {
+      console.error(e);
+      btn.disabled = false;
+      btn.innerHTML = '<span>✨</span> Cast My Vote <span>✨</span>';
+      showToast('Oops! Check your Firebase config.');
+    }
+  };
+</script>
+</body>
+</html>
