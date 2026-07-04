@@ -19,7 +19,8 @@ which model is driving the main conversation.
   "available levels depend on the model". If an effort value errors, drop
   the field and rely on the model choice alone.
 - Model resolution order for a subagent: `CLAUDE_CODE_SUBAGENT_MODEL` env
-  var → per-invocation `model` parameter → frontmatter `model`.
+  var → per-invocation `model` parameter → frontmatter `model` → the main
+  conversation's model (when frontmatter is `inherit` or omitted).
 - Built-in `Explore` and `Plan` subagents do NOT receive CLAUDE.md or git
   status. Custom agents in `.claude/agents/` DO. Consequence: any prompt to
   Explore/Plan must carry its own context.

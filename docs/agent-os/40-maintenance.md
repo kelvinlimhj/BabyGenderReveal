@@ -9,7 +9,7 @@ Read before editing CLAUDE.md or anything in `docs/agent-os/`.
 | `docs/agent-os/LESSONS.md` | YES — append-only, format below. Never rewrite or delete entries. |
 | Verified-facts block in `10-model-dispatch.md` | YES — only to update values re-verified against live sources (claude-api skill / official docs). Update the checked date. Cite the source in the commit message. |
 | `30-prompt-templates.md` | YES — additive tweaks (new template, extra checklist line) that came from a logged lesson. Link the lesson in the commit message. |
-| `00-diagnosis.md`, `20-judgment-rubrics.md`, dispatch ladder & role table in `10` | ASK USER FIRST. These encode the original high-level judgment; a cheaper model "simplifying" them is the main degradation path. Propose the diff, get approval. |
+| `00-diagnosis.md`, `20-judgment-rubrics.md`, and ALL of `10-model-dispatch.md` except its verified-facts block | ASK USER FIRST. These encode the original high-level judgment; a cheaper model "simplifying" them is the main degradation path. Propose the diff, get approval. |
 | `CLAUDE.md` | Project section: yes, keep factual. Hard rules & index table: ASK USER FIRST. Keep ≤150 lines always. |
 | `90-letter.md` | Never edit — historical document. Corrections go in LESSONS.md. |
 | `.claude/agents/*.md` | Additive rule tweaks yes; changing `model`/`tools` fields: ASK USER FIRST. |

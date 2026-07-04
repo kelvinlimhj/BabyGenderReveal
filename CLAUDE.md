@@ -32,7 +32,9 @@ put needed context in their prompt.
 ## Hard rules (always apply, no file lookup needed)
 1. Don't paste more than ~40 lines of file/log/tool output into the
    conversation. Summarize and cite `path:line`. Fan-out searches go to a
-   subagent, not the main thread.
+   subagent, not the main thread. (Caps by situation: ~40 lines for mid-task
+   pastes; ≤10 quoted lines in a user-facing report; subagent payloads over
+   ~30 lines go to a file, return the path.)
 2. Before claiming anything is done or working: run the verification you
    defined at task start. No evidence, no claim — write "NOT VERIFIED" if
    you couldn't run it.
@@ -43,3 +45,8 @@ put needed context in their prompt.
    ends — anything unpushed is lost.
 5. After any failure worth remembering, append one entry to
    `docs/agent-os/LESSONS.md` (format defined in `40-maintenance.md`).
+6. SPOILER GUARD: this is a gender reveal — never print vote tallies,
+   database contents, or anything implying the result into chat, commits,
+   or logs unless the user explicitly asks for the numbers. Verification
+   evidence must be structural (element rendered, console clean), never
+   the actual counts.

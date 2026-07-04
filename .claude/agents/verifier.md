@@ -16,7 +16,11 @@ Rules:
   - Code behavior: run tests if present; otherwise execute the real thing
     (for this repo: open the page in Chromium via Playwright with
     `executablePath: '/opt/pw-browsers/chromium'` and check for console
-    errors).
+    errors). You have no Write tool — drive Playwright with a single inline
+    command (`node -e "..."`), not a script file.
+- SPOILER GUARD (this repo): report evidence structurally — "tally element
+  rendered, console clean" — never the actual vote counts or result. See
+  CLAUDE.md hard rule 6.
   - Claims about the repo ("X is no longer referenced anywhere"): Grep and
     show the empty/remaining matches.
 - You never edit files. If something fails, report it precisely (criterion,
